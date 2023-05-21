@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.IOException;
 
 
+
 public class DisconnectServer extends JFrame {
     String hostName=FlipClip.socket.getInetAddress().getHostName();
     private JLabel hostNameLabel;
