@@ -1,38 +1,16 @@
 package FlipClip;
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
 public class FlipClip {
-    // public static void main(String[] args) {
-    //     String SERVER_IP = "";
-    //     System.out.println("Are you the server or the client?");
-    //     System.out.println("1. Server");
-    //     System.out.println("2. Client");
-    //     String choice;
-    //     while (true) {
-    //         Scanner sc = new Scanner(System.in);
-    //         System.out.print("Enter your choice: ");
-    //         choice = sc.nextLine();
-    //         if (choice.equals("1")) {
-    //             sc.close();
-    //             StartServer();
-    //         } else if (choice.equals("2")) {
-    //             while (true) {
-    //                 System.out.print("Enter the IP address of the server: ");
-    //                 SERVER_IP = sc.next();
-    //                 if (ableToConnectWithIP(SERVER_IP)) {
-    //                     sc.close();
-    //                     CreateClient(SERVER_IP, 1234);
-    //                 } else {
-    //                     System.out.println("Can't find IP address.");
-    //                 }
-    //             }
-    //         } else {
-    //             System.out.println("Invalid choice.");
-    //         }
-    //     }
-    // }
+    static DisconnectServer connected;
+    static ServerSocket serverSocket;
+    static Socket socket;
+    static boolean serverRunning = false;
+    static boolean continueAcceptingConnections = true;
 
+    // This method returns the IP address of the current machine
     private static String getOwnIpAddress() {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -65,16 +43,21 @@ public class FlipClip {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        while (true) {
+    
+        while (continueAcceptingConnections) { // Check the flag before accepting new connections
             try {
-                ServerSocket serverSocket = new ServerSocket(PORT);
+                serverSocket = new ServerSocket(PORT);
                 System.out.println("Waiting for connection...");
-                Socket socket = serverSocket.accept();
-                System.out.println("Connected to the client.");
+                socket = serverSocket.accept();
+                if (socket.isConnected())
+                    connected = new DisconnectServer();
+                    connected.setVisible(true);
+                    BiDirectional.createFrame.dispose();
+                    System.out.println("Connected to the client.");
                 serverSocket.close();
                 afterConnect(socket);
             } catch (Exception e) {
-                System.out.println("client disconnected.\nRestarting server in 1 seconds...");
+                System.out.println("Client disconnected.\nRestarting server in 1 second...");
                 try {
                     Thread.sleep(1000);
                 } catch (Exception e2) {
@@ -84,6 +67,18 @@ public class FlipClip {
             }
         }
     }
+    
+
+    public static void closeServer() {
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     public static boolean ableToConnectWithIP(String ip) {
         try {

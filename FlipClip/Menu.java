@@ -6,10 +6,12 @@ import java.awt.*;
 
 
 public class Menu extends JFrame {
+    public BiDirectional bidirectionalFrame ;
     public Menu() {
         setTitle("FlipClip");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         
         JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
         setContentPane(contentPane);
@@ -40,7 +42,7 @@ public class Menu extends JFrame {
         contentPane.add(panel2);
     }
 
-    private JButton createButton(String text, String imagePath) {
+    public static JButton createButton(String text, String imagePath) {
         ImageIcon icon = new ImageIcon(imagePath);
         icon.setImage(icon.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
         JButton button = new JButton(text, icon);
@@ -51,8 +53,8 @@ public class Menu extends JFrame {
         return button;
     }
 
-    private void openBidirectionalFrame() {
-        BiDirectional bidirectionalFrame = new BiDirectional();
+    public void openBidirectionalFrame() {
+        bidirectionalFrame= new BiDirectional();
         bidirectionalFrame.setVisible(true);
         dispose();
     }

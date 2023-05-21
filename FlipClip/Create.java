@@ -1,6 +1,8 @@
 package FlipClip;
+
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 import java.util.List;
@@ -8,12 +10,13 @@ import javax.swing.*;
 
 public class Create extends JFrame {
     public JLabel statusLabel;
+
     public Create() {
-        
-        
+
         setTitle("FlipClip");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -32,7 +35,7 @@ public class Create extends JFrame {
         modeLabel1.setAlignmentX(Component.LEFT_ALIGNMENT);
         modeLabel2.setAlignmentX(Component.LEFT_ALIGNMENT);
         modeLabel3.setAlignmentX(Component.LEFT_ALIGNMENT);
-    
+
         modeLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         modeLabel1.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         modeLabel2.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
@@ -85,8 +88,6 @@ public class Create extends JFrame {
 
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-
-
         button.addActionListener(e -> copyIpAddress(ipTextField.getText()));
 
         ipPanel.add(button);
@@ -112,15 +113,30 @@ public class Create extends JFrame {
         panel.add(back);
 
         add(panel);
-        
+
     }
 
-    private void openJoinFrame() {
-        // Code to open the Join frame
-    }
+    
 
     private void goBack() {
         // Code to go back to the previous frame goes here
+        FlipClip.continueAcceptingConnections = false; // Stop accepting new connections
+        if (FlipClip.socket != null) {
+            try {
+                FlipClip.socket.close(); // Close the existing socket
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            FlipClip.socket = null; // Set the socket to null
+        }
+        if (FlipClip.serverSocket != null) {
+            try {
+                FlipClip.serverSocket.close(); // Close the existing server socket
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            FlipClip.serverSocket = null; // Set the server socket to null
+        }
         BiDirectional biDirectionalFrame = new BiDirectional();
         biDirectionalFrame.setVisible(true);
         dispose();
@@ -158,7 +174,5 @@ public class Create extends JFrame {
         }
         return (InetAddress.getLoopbackAddress()).toString().replace("/", "");
     }
-
-    
 
 }

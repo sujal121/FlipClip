@@ -5,10 +5,13 @@ import java.awt.*;
 
 
 public class BiDirectional extends JFrame {
+    static Create createFrame;
+    public static Thread serverThread ;
     public BiDirectional() {
         setTitle("FlipClip");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         
         JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
         setContentPane(contentPane);
@@ -61,9 +64,23 @@ public class BiDirectional extends JFrame {
         return button;
     }
 
-    private void openCreateFrame() {
-        // Code to open the Bidirectional frame
-        Create createFrame = new Create();
+    public void StartServer() {
+        // Code to start the server goes here
+        serverThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FlipClip.continueAcceptingConnections = true;
+                FlipClip.StartServer();  // Start the server
+            }
+        });
+        serverThread.start();
+    }
+
+    public void openCreateFrame() {
+        // Code to open Create frame and StartServer() using threads
+        
+        StartServer();
+        createFrame = new Create();
         createFrame.setVisible(true);
         dispose();
     }
